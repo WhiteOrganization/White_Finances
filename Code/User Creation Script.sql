@@ -9,3 +9,6 @@ GRANT create any trigger TO White_Schema;
 GRANT create any procedure TO White_Schema;
 GRANT create sequence TO White_Schema;
 GRANT create synonym TO White_Schema;
+
+GRANT CONNECT, RESOURCE, DBA TO White_Schema;
+GRANT UNLIMITED TABLESPACE TO White_Schema;

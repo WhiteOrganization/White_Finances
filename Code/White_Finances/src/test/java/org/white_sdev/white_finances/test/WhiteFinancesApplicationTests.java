@@ -1,4 +1,4 @@
-package org.white_sdev.White_Finances;
+package org.white_sdev.white_finances.test;
 
 import org.springframework.boot.test.context.SpringBootTest;
 

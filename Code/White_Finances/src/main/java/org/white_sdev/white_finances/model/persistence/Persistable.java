@@ -1,6 +1,6 @@
 /*
- *  Filename:  Prueba.java
- *  Creation Date:  May 19, 2020
+ *  Filename:  Persistable.java
+ *  Creation Date:  Jun 12, 2020
  *  Purpose:   
  *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * 
@@ -98,232 +98,50 @@
  */
 package org.white_sdev.white_finances.model.persistence;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.NotBlank;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.white_sdev.white_finances.exception.White_FinancesException;
 
 /**
- * This is one on the main {@link Entity entities} of the Application Representing one of the most basic elements of it.
- * A concept is the element onto which the user can logically organize its spending or income and categorize it.
  *
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
- * @since May 13, 2020
+ * @since Jun 12, 2020
  */
-@Entity
-@Data //Getters&Setters for all attributes
-@Slf4j
-public class Concept implements Persistable {
-
-    //<editor-fold defaultstate="collapsed" desc="Attributes">
-    /**
-     * The <a href="https://docs.oracle.com/cd/E19798-01/821-1841/6nmq2cpak/index.html#:~:text=If%20an%20entity%20instance%20is,classes%20may%20extend%20entity%20classes">standard</a> 
-     * recommends this in case the {@link Serializable} object could be de-serialized. 
-     * 
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-06-19
-     */
-    static final long serialVersionUID = 1L;
-
-    /**
-     * {@link Id} of the {@link Concept} {@Entity}. Controlled by the framework and generated automatically, all id(s) are configured this way unless a field that will never change
-     * is clearly found in the {@link Entity} structure.
-     *
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-05-21
-     */
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    /**
-     * The name of the Concept. This is the most representative field of the {@link Concept} object; ought to be unique and there shouldn't be another {@link Entity} with the same
-     * name and different {@link Id}.
-     *
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-05-19
-     */
-    @Column(unique = true)
-    @NotBlank
-    private String name;
-
-    /**
-     * The specified {@link Concept} that will function as a category for <b>this</b> one. Making this a sub{@link Concept} of its parent and injecting it into its
-     * {@link #subConcepts} attributes. This implies a recursive relationship where a {@link Concept} can have many {@link Concept subConcepts} establishing this way a
-     * {@link Concept} tree hierarchy.
-     *
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-05-21
-     * @see #subConcepts
-     */
-    @ManyToOne(fetch= FetchType.LAZY)
-//    @JoinColumn(name = "subConcepts")
-    private Concept superConcept;
-
-    /**
-     * The {@link Set} of {@link Concept Concepts} categorized under <code>this</code> {@link Concept} as subConcepts. This {@link Set} of {@link Concept Concepts} turn
-     * <code>this</code> into a category if they are initialized and greater than 0.
-     *
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-05-22
-     * @see #superConcept
-     */
-    @OneToMany(mappedBy = "superConcept", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private Set<Concept> subConcepts = new HashSet<>();
-
-    /**
-     * Any comments that the user will define to identify the concept more easily.
-     *
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-05-22
-     */
-    private String comments;
-
-
-
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="Methods">
+public interface Persistable extends Serializable{
     
     /**
-     * Required no-Arguments Constructor by 
-     * <a href="https://docs.jboss.org/hibernate/core/3.5/reference/en/html/persistent-classes.html#persistent-classes-pojo-constructor">Hibernate</a>.
-     * 
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-05-21
-     */
-    protected Concept() { }
-    
-    /**
-     * Default Constructor of the class providing solely the name of the Concept. Initial setup; The name of the concept being the most representative attribute of the
-     * {@link Entity}, This method receives the name of the concept, then initializes it and ignores the rest of the attributes of the entity.
-     *
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-05-21
-     * @param name String to perform the operation with.
-     * @throws IllegalArgumentException - if the argument provided is null.
-     */
-    public Concept(String name) {
-	log.trace("::Concept(name) - Start: Constructor");
-	if (name == null) throw new IllegalArgumentException("The name of the Concept can't be null.");
-	try {
-
-	    this.name = name;
-
-	    log.trace("::Concept(name) - Finish: Constructor");
-	} catch (Exception e) {
-	    throw new White_FinancesException("Impossible to complete the operation due to an unknown internal error.", e);
-	}
-    }
-
-    @java.lang.Override
-    public java.lang.String toString() {
-	return "Concept(id=" + this.getId() + ", name=" + this.getName() + ", superConcept=" + 
-			    (this.getSuperConcept()!=null?this.getSuperConcept().getName():"null") + 
-			    ", subConcepts=" + this.getSubConcepts() + ", comments=" + this.getComments() + ")";
-    }
-
-    /**
-     * Compares both {@link Persistable Persistables} {@link Entity Entities} properties and returns wheather they have the exact same elements or not.
-     * Compares the actual object with the one provided.
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+     * Compares both {@link Persistable Persistables} {@link Entity Entities} properties and returns weather they have the exact same elements or not.Compares the actual object with the one provided.
+     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>	    
      * @since 2020-06-12
      * @param persistible The second {@link Persisitible} {@linnk Object} to compare with <code>this</code>.
      * @return <code>true</code> in case both objects are clones, <code>false</code> in case the provided parameter is null.
      */
-    public boolean isClone(Concept persistible){ 
-	log.trace("::isClone(persistible) - Start: ");
-	if (persistible==null) return false;
-	try{
-	    
-	    if(!Objects.equals(getId(), persistible.getId()))return false;
-	    if(!(getName() == null ? persistible.getName() == null : getName().equals(persistible.getName())))return false;
-	    if(!(getSuperConcept()==persistible.getSuperConcept()))return false;
-	    if(!(getSubConcepts().equals( persistible.getSubConcepts() )))return false;
-	    if(!(getComments() == null? true : getComments().equals(persistible.getComments())))return false;
-	    
-	    log.trace("::isClone(persistible) - Finish: ");
-	    return true;
-	    
-	} catch (Exception e) {
-	    log.debug("::isClone(persistible) - Exception: "+e);
-            throw new RuntimeException("Impossible to complete the operation due to an unknown internal error.", e);
-        }
-    }
-    
-
-    /**
-     * Adds the given {@link Concept Concept(s)} to the set of {@link #subConcepts} of <code>this</code> {@link Concept} instance. 
-     * As a result, {@link Concept this Concept} will be added as {@link #superConcept} for the provided {@link Concept Concept(s)}.
-     * This method is a bridge and uses {@link #addSubConcepts(java.util.Collection) } to complete his objective.
-     *
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-09-07
-     * @param subConcepts {@link Concept Concept(s)} to add to the {@link #subConcepts} {@link HashSet} already configured as {@link #subConcepts} of
-     * <code>this</code>. In case there are no {@link #subConcepts} they will be initialized, and in case the provided {@link Collection} of {@link Concept Concepts} 
-     * is null or empty they will be ignored.
-     */
-    public void addSubConcepts(Concept... subConcepts) {
-	log.trace("::addSubConcepts(Concept... subConcepts) - Start: ");
-	addSubConcepts(new ArrayList<>(Arrays.asList(subConcepts)));
-	log.trace("::addSubConcepts(Concept... subConcepts) - Finish: ");
-    }
-
-    /**
-     * Adds the given {@link Collection} of {@link Concept Concepts} to the set of {@link #subConcepts} of <code>this</code> instance. 
-     * As a result, {@link Concept this Concept} will be added as {@link #superConcept} for the provided {link Collection} of {@link Concept Concepts}.
-     *
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-09-07
-     * @param subConcepts {@link Collection} of {@link Concept Concepts} to add to the {@link #subConcepts} {@link HashSet} already configured as {@link #subConcepts} of
-     * <code>this</code>. In case there are no {@link #subConcepts} they will be initialized, and in case the provided {@link Collection} of {@link Concept Concepts} 
-     * is null or empty they will be ignored.
-     */
-    public void addSubConcepts(Collection<Concept> subConcepts) {
-	log.trace("::addSubConcepts(Collection<Concept> subConcepts) - Start: ");
-	if (subConcepts == null || subConcepts.size() < 1) {
-	    log.trace("::addSubConcepts(Collection<Concept> subConcepts) - Finish: Called with empty or nulled concepts to add");
-	    return;
-	}
+    public default boolean isClone(Persistable persistible){
+	
 	try {
-
-	    if (this.getSubConcepts() == null) this.setSubConcepts(new HashSet<>());
-	    for (Concept subConcept : subConcepts) {
-		//<editor-fold defaultstate="collapsed" desc="Individual Validations">
-		if (subConcept == null) continue;
-		if (this == subConcept || subConcept.equals(this)) {
-		    log.warn("::addSubConcepts(Collection<Concept> subConcepts) The caller is trying to asign a concept as its own subConcept: \n"
-			    + "\t\t\t" + subConcept + ". \n"
-			    + "\t\t\t" + "Attempt to breake Business rule is rejected and ignored.");
-		    continue;
-		}
-		//</editor-fold>
-		this.getSubConcepts().add(subConcept); //Main Operation
-		subConcept.setSuperConcept(this);
+	    if(this.getClass()!=persistible.getClass()) return false;
+	    
+	    BeanInfo entityInfo = Introspector.getBeanInfo(persistible.getClass());
+	    PropertyDescriptor[] propertyDescriptors=entityInfo.getPropertyDescriptors();
+	    for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+		Object persistiblePropertyValue = propertyDescriptor.getReadMethod().invoke(persistible);
+		Object thisPropertyValue = propertyDescriptor.getReadMethod().invoke(this);
+		if(persistiblePropertyValue != null){
+		    if(thisPropertyValue != null){
+			if(persistiblePropertyValue!=thisPropertyValue) return false;
+		    }else{
+			return false;
+		    }
+		} 
 	    }
-
-	    log.trace("::addSubConcepts(Collection<Concept> subConcepts) - Finish: ");
-	} catch (Exception e) {
-	    log.debug("::addSubConcepts(Collection<Concept> subConcepts) - Exception: " + e);
-	    throw new White_FinancesException("Impossible to add the Concepts as subConcepts of the element due tu an Unknown error.", e);
+	    return true;
+	}catch(Exception ex){
+	    //log.debug("::isClone(persistible) - Exception: "+ex);
+	    throw new White_FinancesException("Impossible to complete the operation due to an unknown internal error.", ex);
 	}
     }
-    //</editor-fold>
     
 }

@@ -1,6 +1,6 @@
 /*
- *  Filename:  ConceptTest.java
- *  Creation Date:  May 19, 2020
+ *  Filename:  LoggerTracker.java
+ *  Creation Date:  Jun 24, 2020
  *  Purpose:   
  *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * 
@@ -96,116 +96,152 @@
  * 
  * Creative Commons may be contacted at creativecommons.org.
  */
-package org.white_sdev.White_Finances.model.persistence;
+package org.white_sdev.white_finances.test.mocks;
 
-import javax.persistence.Entity;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.white_sdev.white_finances.model.persistence.Concept;
-import org.white_sdev.white_finances.repo.ConceptRepository;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.white_sdev.white_finances.exception.White_FinancesException;
+import static org.white_sdev.white_validations.parameters.ParameterValidator.notNullValidation;
 
 /**
  *
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+ * @since Jun 24, 2020
  */
-@RunWith(SpringRunner.class)
-//@SpringBootTest
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
 @Slf4j
-public class ConceptTest {
-
-    @Autowired
-    TestEntityManager manager;
-    @Autowired
-    ConceptRepository repo;
+public class LoggerTracker {
 
     /**
-     * Testing consistency of the equals method in Lombok API and javadocs.
-     *
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</>
-     * @since 2020-05-19
-     */
-    @Test
-    public void testLombokEquals() {
-	log.trace("::testLombokEquals() - Start: ");
-	try{
-	    
-	    Concept a = new Concept();
-	    a.setId(1L);
-	    a.setName("TestConcept");
-
-	    Concept b = new Concept();
-	    b.setId(1L);
-	    b.setName("TestConcept");
-
-	    assertEquals(a, b);
-
-	    b.setName("Different");
-
-	    assertNotEquals(a, b);
-
-	    assertNotNull(repo);
-
-	    Concept a1 = new Concept();
-	    a1.setName("TestConcept");
-
-	    b.setId(a1.getId());
-	    assertNotEquals(a1, b);
-
-	    b.setName(a1.getName());
-	    assertEquals(a1, b);
-
-	    repo.save(a1);
-	    assertNotEquals(a1, b);
-	    log.trace("::testLombokEquals() - Finish: ");
-	
-	}catch(Exception ex){
-	    log.error("::testLombokEquals() - Exception: ", ex);
-	    throw new RuntimeException(ex);
-	}
-    }
-
-    /**
-     * Tests the cascading saves and updates functionality of the entity. ; This is an initial test that won't be necessary for the rest of the {@link Entity}(es).
-     *
+     * It reduces the functionality of the methods in the {@link ILoggingEvent} interface to Monitor the provided {@link Class clazz}, and immediately starts the monitoring procedure of it.
+     * Thought the inner class {@link Slf4jTracker} provides access to a list of customized methods that will help the caller to query the monitoring object to obtain information from it. 
+     * This method ultimately uses the method {@link Slf4jTracker#launchMemoryApenderFor(java.lang.Class) } to launch the monitoring process though {@link Slf4jTracker} constructor.
+     * 
      * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-05-21
+     * @since 2020-06-27
+     * @param clazz {@link Class} From where this method will launch the monitoring process of its logger. 
+     * @return returned Object  value as the result of the operation.
+     * @throws IllegalArgumentException - if the provided parameter is null.
      */
-    @Test
-    public void testCascade() {
-	log.trace("::testCascade() - Start: ");
+    public static Slf4jTracker startLoggerMonitorFor(Class clazz) {
+	
+	log.trace("::startLoggerMonitorFor(clazz) - Start: ");
+	notNullValidation(clazz);
+	if (clazz==null) throw new IllegalArgumentException("You must provide the class to extract the logger from.");
 	try{
-	    Concept gas = new Concept("Car Gasoline");
-	    Concept mtto = new Concept("Car Maintenance");
-	    Concept transport = new Concept("Transportation");
-
-	    transport.addSubConcepts(gas);
-	    transport.addSubConcepts(mtto);
-	    transport.addSubConcepts(transport);
-
-	    repo.save(transport);
-
-	    assertNotNull(transport.getId());
-	    assertNotNull(gas.getId());
-	    assertNotNull(mtto.getId());
-
-	    log.trace("::testCascade() - Finish: ");
 	    
-	    //throw new RuntimeException("3er nivel",new RuntimeException("2o nivel",new RuntimeException("Raiz")));
+	    Slf4jTracker tracker=new Slf4jTracker(clazz);
+	    log.trace("::startLoggerMonitorFor(clazz) - Finish: ");
+	    return tracker;
 	    
-	}catch(Exception ex){
-	    log.error("::testCascade() - Exception: ", ex);
-	    throw new RuntimeException(ex);
+	    
+	} catch (Exception e) {
+	    log.debug("::startLoggerMonitorFor(clazz) - Exception: "+e);
+            throw new RuntimeException("Impossible to complete the operation due to an unknown internal error.", e);
+        }
+    }
+    
+    /**
+     * Inner class that will contain both the monitoring of the logs for the provided class in its Constructor and the methods to query, filter and access them.
+     * 
+     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+     * @since 2020-09-07
+     */
+    public static class Slf4jTracker extends ch.qos.logback.core.read.ListAppender<ch.qos.logback.classic.spi.ILoggingEvent> {
+
+	/**
+	 * Only constructor of the class. Receives a {@link Class} to start the monitoring over it and begins the process.
+	 * 
+	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+	 * @since 2020-06-27
+	 * @param clazz {@link Class} From where this method will launch the monitoring process of its logger. 
+	 * @throws IllegalArgumentException - if the provided {@link Class} to monitor is null.
+	 */
+	public Slf4jTracker(Class clazz) {
+	    super();
+	    notNullValidation(clazz);
+	    launchMemoryApenderFor(clazz);
+	}
+
+	/**
+	 * Launches the monitoring process for the provided {@link Class}.
+	 * 
+	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+	 * @since 2020-06-27
+	 * @param clazz {@link Class} From where this method will launch the monitoring process of its logger. 
+	 * @return {@link Slf4jTracker} instance with the monitoring process running and access to <code>this</code> class methods to query, filter, and access the logs data.
+	 * @throws IllegalArgumentException - if the provided {@link Class} to monitor is null.
+	 */
+	public final Slf4jTracker launchMemoryApenderFor(Class clazz) {
+	    log.trace("::launchMemoryApenderFor(clazz) - Start: ");
+	    notNullValidation(clazz, "The provided class to monitor cant be null");
+	    try{
+		//This might potentially result in an exeption
+		ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(clazz);
+		this.setContext((ch.qos.logback.classic.LoggerContext) org.slf4j.LoggerFactory.getILoggerFactory());
+		logger.setLevel(ch.qos.logback.classic.Level.DEBUG);
+		logger.addAppender(this);
+		
+		log.debug("::launchMemoryApenderFor(clazz): Monitoring Starting for class: "+clazz.getName());
+		this.start();
+		
+		log.trace("::launchMemoryApenderFor(clazz) - Finish: Monitoring Started");
+		return this;
+	    }catch(Exception e){
+		log.error("::launchMemoryApenderFor(clazz) - Exception: "+e);
+		throw new White_FinancesException("Unable to start the monitoring process due to an error.",e);
+	    }
+	}
+
+	//TODO finish javadocs
+	public void reset() {
+	    this.list.clear();
+	}
+
+	public boolean contains(String string, ch.qos.logback.classic.Level level) {
+	    return this.list.stream()
+		    .anyMatch(event -> event.getMessage().contains(string)
+		    && event.getLevel().equals(level));
+	}
+
+	public boolean containsLogsWithLevel(ch.qos.logback.classic.Level level) {
+	    return this.list.stream()
+		    .anyMatch(event -> event.getLevel().equals(level));
+	}
+
+	public boolean matches(String partialString, ch.qos.logback.classic.Level level) {
+	    return this.list.stream()
+		    .anyMatch(event -> event.getMessage().matches(partialString)
+		    && event.getLevel().equals(level));
+	}
+
+	public int countEventsForLogger(String loggerName) {
+	    return (int) this.list.stream()
+		    .filter(event -> event.getLoggerName().contains(loggerName))
+		    .count();
+	}
+
+	public List<ch.qos.logback.classic.spi.ILoggingEvent> search(String string) {
+	    return this.list.stream()
+		    .filter(event -> event.getMessage().toString().contains(string))
+		    .collect(Collectors.toList());
+	}
+
+	public List<ch.qos.logback.classic.spi.ILoggingEvent> search(String string, ch.qos.logback.classic.Level level) {
+	    return this.list.stream()
+		    .filter(event -> event.getLevel().equals(level)
+		    && event.getMessage().contains(string))
+		    .collect(Collectors.toList());
+	}
+
+	public int getSize() {
+	    return this.list.size();
+	}
+
+	public List<ch.qos.logback.classic.spi.ILoggingEvent> getLoggedEvents() {
+	    return Collections.unmodifiableList(this.list);
 	}
     }
-
 }
