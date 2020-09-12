@@ -107,7 +107,9 @@ import org.white_sdev.white_finances.exception.White_FinancesException;
 import static org.white_sdev.white_validations.parameters.ParameterValidator.notNullValidation;
 
 /**
- *
+ * This class provides a Log monitoring functionality, it stores the log history and provides utility methods for the user to query, filter, 
+ * and edit the history of the logs of a given target {@link Class}.
+ * 
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * @since Jun 24, 2020
  */
@@ -115,37 +117,37 @@ import static org.white_sdev.white_validations.parameters.ParameterValidator.not
 public class LoggerTracker {
 
     /**
-     * It reduces the functionality of the methods in the {@link ILoggingEvent} interface to Monitor the provided {@link Class clazz}, and immediately starts the monitoring procedure of it.
-     * Thought the inner class {@link Slf4jTracker} provides access to a list of customized methods that will help the caller to query the monitoring object to obtain information from it. 
-     * This method ultimately uses the method {@link Slf4jTracker#launchMemoryApenderFor(java.lang.Class) } to launch the monitoring process though {@link Slf4jTracker} constructor.
-     * 
+     * It reduces the functionality of the methods in the {@link ILoggingEvent} interface to Monitor the provided {@link Class clazz}, and immediately starts the monitoring
+     * procedure of it. Thought the inner class {@link Slf4jTracker} provides access to a list of customized methods that will help the caller to query the monitoring object to
+     * obtain information from it. This method ultimately uses the method {@link Slf4jTracker#launchMemoryApenderFor(java.lang.Class) } to launch the monitoring process though
+     * {@link Slf4jTracker} constructor.
+     *
      * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
      * @since 2020-06-27
-     * @param clazz {@link Class} From where this method will launch the monitoring process of its logger. 
-     * @return returned Object  value as the result of the operation.
+     * @param clazz {@link Class} From where this method will launch the monitoring process of its logger.
+     * @return returned Object value as the result of the operation.
      * @throws IllegalArgumentException - if the provided parameter is null.
      */
     public static Slf4jTracker startLoggerMonitorFor(Class clazz) {
-	
+
 	log.trace("::startLoggerMonitorFor(clazz) - Start: ");
 	notNullValidation(clazz);
-	if (clazz==null) throw new IllegalArgumentException("You must provide the class to extract the logger from.");
-	try{
-	    
-	    Slf4jTracker tracker=new Slf4jTracker(clazz);
+	if (clazz == null) throw new IllegalArgumentException("You must provide the class to extract the logger from.");
+	try {
+
+	    Slf4jTracker tracker = new Slf4jTracker(clazz);
 	    log.trace("::startLoggerMonitorFor(clazz) - Finish: ");
 	    return tracker;
-	    
-	    
+
 	} catch (Exception e) {
-	    log.debug("::startLoggerMonitorFor(clazz) - Exception: "+e);
-            throw new RuntimeException("Impossible to complete the operation due to an unknown internal error.", e);
-        }
+	    log.debug("::startLoggerMonitorFor(clazz) - Exception: " + e);
+	    throw new RuntimeException("Impossible to complete the operation due to an unknown internal error.", e);
+	}
     }
-    
+
     /**
      * Inner class that will contain both the monitoring of the logs for the provided class in its Constructor and the methods to query, filter and access them.
-     * 
+     *
      * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
      * @since 2020-09-07
      */
@@ -153,10 +155,10 @@ public class LoggerTracker {
 
 	/**
 	 * Only constructor of the class. Receives a {@link Class} to start the monitoring over it and begins the process.
-	 * 
+	 *
 	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
 	 * @since 2020-06-27
-	 * @param clazz {@link Class} From where this method will launch the monitoring process of its logger. 
+	 * @param clazz {@link Class} From where this method will launch the monitoring process of its logger.
 	 * @throws IllegalArgumentException - if the provided {@link Class} to monitor is null.
 	 */
 	public Slf4jTracker(Class clazz) {
@@ -167,56 +169,121 @@ public class LoggerTracker {
 
 	/**
 	 * Launches the monitoring process for the provided {@link Class}.
-	 * 
+	 *
 	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
 	 * @since 2020-06-27
-	 * @param clazz {@link Class} From where this method will launch the monitoring process of its logger. 
+	 * @param clazz {@link Class} From where this method will launch the monitoring process of its logger.
 	 * @return {@link Slf4jTracker} instance with the monitoring process running and access to <code>this</code> class methods to query, filter, and access the logs data.
 	 * @throws IllegalArgumentException - if the provided {@link Class} to monitor is null.
 	 */
 	public final Slf4jTracker launchMemoryApenderFor(Class clazz) {
 	    log.trace("::launchMemoryApenderFor(clazz) - Start: ");
 	    notNullValidation(clazz, "The provided class to monitor cant be null");
-	    try{
+	    try {
 		//This might potentially result in an exeption
 		ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(clazz);
 		this.setContext((ch.qos.logback.classic.LoggerContext) org.slf4j.LoggerFactory.getILoggerFactory());
 		logger.setLevel(ch.qos.logback.classic.Level.DEBUG);
 		logger.addAppender(this);
-		
-		log.debug("::launchMemoryApenderFor(clazz): Monitoring Starting for class: "+clazz.getName());
+
+		log.debug("::launchMemoryApenderFor(clazz): Monitoring Starting for class: " + clazz.getName());
 		this.start();
-		
+
 		log.trace("::launchMemoryApenderFor(clazz) - Finish: Monitoring Started");
 		return this;
-	    }catch(Exception e){
-		log.error("::launchMemoryApenderFor(clazz) - Exception: "+e);
-		throw new White_FinancesException("Unable to start the monitoring process due to an error.",e);
+	    } catch (Exception e) {
+		log.error("::launchMemoryApenderFor(clazz) - Exception: " + e);
+		throw new White_FinancesException("Unable to start the monitoring process due to an error.", e);
 	    }
 	}
 
-	//TODO finish javadocs
+	/**
+	 * Restarts the logging monitoring for this instance. ; It will clean the list where the {@link Slf4jTracker Tracker} is storing the monitoring logs and start over.
+	 *
+	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+	 * @since 2020-09-11
+	 */
 	public void reset() {
-	    this.list.clear();
+	    log.trace("::reset() - Start: ");
+	    try {
+
+		this.list.clear();
+
+		log.trace("::reset() - Finish: ");
+	    } catch (Exception e) {
+		throw new RuntimeException("Impossible to restart logs monitoring due to an unknown error.", e);
+	    }
 	}
 
-	public boolean contains(String string, ch.qos.logback.classic.Level level) {
-	    return this.list.stream()
-		    .anyMatch(event -> event.getMessage().contains(string)
-		    && event.getLevel().equals(level));
+	/**
+	 * Asks the monitor if there is a log with the specified {@link ch.qos.logback.classic.Level Level} in the logs history.
+	 * It searches in the entire logs list if there is a log that contains the same {@link ch.qos.logback.classic.Level Level} as the provided one.
+	 * This is a bridge method for {@link #contains(java.lang.String, ch.qos.logback.classic.Level) } with no logMessage to filter.
+	 * 
+	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+	 * @since 2020-09-12
+	 * @param level {link ch.qos.logback.classic.Level Level} to look for in the logs history. 
+	 * @return the log found with the specified {link ch.qos.logback.classic.Level Level}. False if level is null.
+	 */
+	public boolean contains(ch.qos.logback.classic.Level level) {
+	    return contains(null, level);
+	}
+	
+	/**
+	 * Asks the monitor if there is a log with the specified {@link ch.qos.logback.classic.Level Level} and exact message in the logs history.
+	 * It searches in the entire logs list if there is a log that contains the same {@link ch.qos.logback.classic.Level Level} as the provided one as well as the same message.
+	 * 
+	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+	 * @since 2020-09-12
+	 * @param logMessage {@link String} message to look for in the logs history
+	 * @param level {link ch.qos.logback.classic.Level Level} to look for in the logs history. 
+	 * @return the log found with the specified {link ch.qos.logback.classic.Level Level} and message. False if logMessage or level are null.
+	 */
+	public boolean contains(String logMessage, ch.qos.logback.classic.Level level) {
+	    log.trace("::contains() - Start: ");
+	    try {
+		Boolean b= logMessage==null? 
+			this.list.stream().anyMatch(event -> event.getLevel().equals(level)):
+			this.list.stream().anyMatch(event -> event.getLevel().equals(level) && event.getMessage().contains(logMessage));
+		
+		log.trace("::contains() - Finish: ");
+		return b;
+	    
+	    } catch (Exception e) {
+		throw new RuntimeException("Impossible find exact match due to an unknown error.", e);
+	    }
 	}
 
-	public boolean containsLogsWithLevel(ch.qos.logback.classic.Level level) {
-	    return this.list.stream()
-		    .anyMatch(event -> event.getLevel().equals(level));
-	}
-
+	/**
+	 * Asks the monitor if there is a log that matches the specified {@link ch.qos.logback.classic.Level Level} and the message has the partialString in it in any the logs history.
+	 * It searches in the entire logs list if there is a log that has the same {@link ch.qos.logback.classic.Level Level} as the provided one and matches the given partialString in the message.
+	 * 
+	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+	 * @since 2020-09-12
+	 * @param partialString {@link String} to look for a match into the messages at the logs history
+	 * @param level {link ch.qos.logback.classic.Level Level} to look for in the logs history. 
+	 * @return the log found with the specified {link ch.qos.logback.classic.Level Level} and message. False if logMessage or level are null.
+	 */
 	public boolean matches(String partialString, ch.qos.logback.classic.Level level) {
-	    return this.list.stream()
-		    .anyMatch(event -> event.getMessage().matches(partialString)
-		    && event.getLevel().equals(level));
+	    log.trace("::contains() - Start: ");
+	    try {
+		Boolean b= partialString!=null? 
+			level!=null?
+			    this.list.stream().anyMatch(event -> event.getMessage().matches(partialString) && event.getLevel().equals(level)):
+			    this.list.stream().anyMatch(event -> event.getMessage().matches(partialString)):
+			level!=null?
+			    this.list.stream().anyMatch(event -> event.getLevel().equals(level)):
+			    false;
+		
+		log.trace("::contains() - Finish: ");
+		return b;
+	    
+	    } catch (Exception e) {
+		throw new RuntimeException("Impossible find exact match due to an unknown error.", e);
+	    }
 	}
 
+	//TODO Finish documentation
 	public int countEventsForLogger(String loggerName) {
 	    return (int) this.list.stream()
 		    .filter(event -> event.getLoggerName().contains(loggerName))

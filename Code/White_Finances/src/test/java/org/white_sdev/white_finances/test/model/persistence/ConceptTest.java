@@ -252,7 +252,7 @@ public class ConceptTest {
 	    
 	    LoggerTracker.Slf4jTracker conceptMockMemoryAppender=LoggerTracker.startLoggerMonitorFor(Concept.class); //TODO Etablish it as LoggerTracker and Reduce it to a single static simple method (start & monitor)
 	    transport.addSubConcepts(transport);
-	    assert( conceptMockMemoryAppender.containsLogsWithLevel(ch.qos.logback.classic.Level.WARN) );
+	    assert( conceptMockMemoryAppender.contains(ch.qos.logback.classic.Level.WARN) );
 	    
 	    
 	    assertTrue(transport.getSuperConcept() == null);
