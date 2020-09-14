@@ -109,7 +109,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.white_sdev.white_finances.model.persistence.Concept;
@@ -126,9 +125,7 @@ import org.white_sdev.white_finances.test.mocks.LoggerTracker;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Slf4j
 public class ConceptTest {
-    //TODO define javaDocs
-    @Autowired
-    TestEntityManager manager;
+    
     @Autowired
     ConceptRepository repo;
     
@@ -169,7 +166,6 @@ public class ConceptTest {
 	try {
 
 	    Concept a = new Concept("TestConcept");
-	    //manager.persist(a);
 	    assertEquals(0, repo.count());
 	    Concept save = repo.save(a);
 	    assertEquals(1, repo.count());
@@ -250,7 +246,7 @@ public class ConceptTest {
 	    transport.setSubConcepts(subConcepts);
 
 	    
-	    LoggerTracker.Slf4jTracker conceptMockMemoryAppender=LoggerTracker.startLoggerMonitorFor(Concept.class); //TODO Etablish it as LoggerTracker and Reduce it to a single static simple method (start & monitor)
+	    LoggerTracker.Slf4jTracker conceptMockMemoryAppender=LoggerTracker.startLoggerMonitorFor(Concept.class);
 	    transport.addSubConcepts(transport);
 	    assert( conceptMockMemoryAppender.contains(ch.qos.logback.classic.Level.WARN) );
 	    
@@ -259,7 +255,6 @@ public class ConceptTest {
 
 	    long before=repo.count();
 	    repo.save(transport);
-	    //manager.persist(transport);
 	    assertEquals(repo.count(), before+3);
 
 	    assertNotNull(transport.getId());

@@ -99,6 +99,7 @@
 package org.white_sdev.white_finances.test.mocks;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Collections;
 import java.util.List;
@@ -265,7 +266,7 @@ public class LoggerTracker {
 	 * @return the log found with the specified {link ch.qos.logback.classic.Level Level} and message. False if logMessage or level are null.
 	 */
 	public boolean matches(String partialString, ch.qos.logback.classic.Level level) {
-	    log.trace("::contains() - Start: ");
+	    log.trace("::matches(partialString,level) - Start: ");
 	    try {
 		Boolean b= partialString!=null? 
 			level!=null?
@@ -275,7 +276,7 @@ public class LoggerTracker {
 			    this.list.stream().anyMatch(event -> event.getLevel().equals(level)):
 			    false;
 		
-		log.trace("::contains() - Finish: ");
+		log.trace("::matches(partialString,level) - Finish: ");
 		return b;
 	    
 	    } catch (Exception e) {
@@ -283,30 +284,93 @@ public class LoggerTracker {
 	    }
 	}
 
-	//TODO Finish documentation
-	public int countEventsForLogger(String loggerName) {
-	    return (int) this.list.stream()
+	/**
+	 * It evaluates how many events match with the provided loggerName.
+	 * 
+	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+	 * @since 2020-09-14
+	 * @param loggerName logger name to filter the search with.
+	 * @return  number of events that match with the provided loggerName.
+	 */
+	public Long countEventsForLogger(String loggerName) {
+	    log.trace("::countEventsForLogger(loggerName) - Start: ");
+	    try {
+		Long b= this.list.stream()
 		    .filter(event -> event.getLoggerName().contains(loggerName))
 		    .count();
+		
+		log.trace("::countEventsForLogger(loggerName) - Finish: ");
+		return b;
+	    
+	    } catch (Exception e) {
+		throw new RuntimeException("Impossible find the number of events with the Logger Name due to an unknown error.", e);
+	    }
+	    
 	}
 
-	public List<ch.qos.logback.classic.spi.ILoggingEvent> search(String string) {
-	    return this.list.stream()
-		    .filter(event -> event.getMessage().toString().contains(string))
-		    .collect(Collectors.toList());
+	/**
+	 * Provides a {@link List} of {@link ch.qos.logback.classic.spi.ILoggingEvent ILoggingEvents} that match with the <code>message</code> provided.
+	 * If the <code>message</code> provided is null, this will return an empty {@link List}.
+	 * This is a bridge method that uses {@link #search(java.lang.String, ch.qos.logback.classic.Level) } 
+	 * with a <code>null</code> {@link ch.qos.logback.classic.Level level} to complete its objective.
+	 * 
+	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+	 * @since 2020-09-14
+	 * @param message   Message on the logs to look for exactly or partially in the logs.
+	 * @return	    {@link List} of logs that will match with the provided filters.
+	 */
+	public List<ch.qos.logback.classic.spi.ILoggingEvent> search(String message) {
+	    return search(message,null);
 	}
 
-	public List<ch.qos.logback.classic.spi.ILoggingEvent> search(String string, ch.qos.logback.classic.Level level) {
-	    return this.list.stream()
-		    .filter(event -> event.getLevel().equals(level)
-		    && event.getMessage().contains(string))
-		    .collect(Collectors.toList());
+	/**
+	 * Provides a {@link List} of {@link ch.qos.logback.classic.spi.ILoggingEvent ILoggingEvents} that match with the <code>message</code> and 
+	 * {@link ch.qos.logback.classic.Level Level} provided.
+	 * If the <code>message</code> and {@link ch.qos.logback.classic.Level Level} provided are null, this will return an empty {@link List}.
+	 * 
+	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+	 * @since 2020-09-14
+	 * @param partialMessage   Message on the logs to look for exactly or partially in the logs.
+	 * @param level	    {@link ch.qos.logback.classic.Level Level} of the Logs to filter with.
+	 * @return	    {@link List} of logs that will match with the provided filters.
+	 */
+	public List<ch.qos.logback.classic.spi.ILoggingEvent> search(String partialMessage, ch.qos.logback.classic.Level level) {
+	    log.trace("::search(partialMessage,level) - Start: ");
+	    try {
+		List<ch.qos.logback.classic.spi.ILoggingEvent> events= partialMessage!=null? 
+			level!=null?
+			    this.list.stream().filter(event -> event.getMessage().matches(partialMessage) && event.getLevel().equals(level)).collect(Collectors.toList()):
+			    this.list.stream().filter(event -> event.getMessage().matches(partialMessage)).collect(Collectors.toList()):
+			level!=null?
+			    this.list.stream().filter(event -> event.getLevel().equals(level)).collect(Collectors.toList()):
+			    new ArrayList<>();
+		
+		log.trace("::search(partialMessage,level) - Finish: ");
+		return events;
+	    
+	    } catch (Exception e) {
+		throw new RuntimeException("Impossible execute the search over the logs due to an unknown error.", e);
+	    }
 	}
 
+	/**
+	 * Obtains the number of logs recorded.
+	 * 
+	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+	 * @since 2020-09-14
+	 * @return the number of logs recorded by the monitor thru the size of the list that store the {@link ch.qos.logback.classic.spi.ILoggingEvent events}.
+	 */
 	public int getSize() {
 	    return this.list.size();
 	}
 
+	/**
+	 * Obtains an unmodifiable {@link List} copy of the one that monitor has used to store the logs.
+	 * 
+	 * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+	 * @since 2020-09-14
+	 * @return an unmodifiable {@link List} with a copy of the one that monitor has used to store the {@link ch.qos.logback.classic.spi.ILoggingEvent events}.
+	 */
 	public List<ch.qos.logback.classic.spi.ILoggingEvent> getLoggedEvents() {
 	    return Collections.unmodifiableList(this.list);
 	}
