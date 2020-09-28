@@ -1,6 +1,6 @@
 /*
- *  Filename:  Persistable.java
- *  Creation Date:  Jun 12, 2020
+ *  Filename:  MontlyPeriod.java
+ *  Creation Date:  Sep 27, 2020
  *  Purpose:   
  *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * 
@@ -96,53 +96,43 @@
  * 
  * Creative Commons may be contacted at creativecommons.org.
  */
-package org.white_sdev.white_finances.model.persistence;
+package org.white_sdev.white_finances.model.bean;
 
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.io.Serializable;
-import javax.persistence.Entity;
-import org.white_sdev.white_finances.exception.White_FinancesException;
+import lombok.extern.slf4j.Slf4j;
+
+import java.time.Month;
+
+//import static org.white_sdev.white_validations.parameters.ParameterValidator.notNullValidation;
 
 /**
- * Interface that represents all the persistable instances in the app and standardizes some common methods they have.
+ * 
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
- * @since Jun 12, 2020
+ * @since Sep 27, 2020
  */
-public interface Persistable extends Serializable{
+@Slf4j
+public class MontlyPeriod extends Period{
+    
+    Month month;
     
     /**
-     * Compares both {@link Persistable Persistables} {@link Entity Entities} properties and returns weather they have the exact same elements or not.
-     * Compares the actual object [<code>this</code>] with the one provided.
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>	    
-     * @since 2020-06-12
-     * @param persistible The second {@link Persisitible} {@linnk Object} to compare with <code>this</code>.
-     * @return <code>true</code> in case both objects are clones, <code>false</code> in case the provided parameter is null.
+     * Class Constructor. {Requirement_Reference}
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since Sep 27, 2020
+     * @param parameter The {@linkn Object} parameter to create <code>this</code> instance.
+     * @throws IllegalArgumentException - if the argument provided is null.
      */
-    public default boolean isClone(Persistable persistible){
-	
-	try {
-	    if(this.getClass()!=persistible.getClass()) return false;
+    public MontlyPeriod(Month month) {
+	log.trace("::MontlyBudget() - Start: ");
+	//notNullValidation(parameter,"Impossible to create the object. The parameter can't be null.");
+	try{
 	    
-	    BeanInfo entityInfo = Introspector.getBeanInfo(persistible.getClass());
-	    PropertyDescriptor[] propertyDescriptors=entityInfo.getPropertyDescriptors();
-	    for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-		Object persistiblePropertyValue = propertyDescriptor.getReadMethod().invoke(persistible);
-		Object thisPropertyValue = propertyDescriptor.getReadMethod().invoke(this);
-		if(persistiblePropertyValue != null){
-		    if(thisPropertyValue != null){
-			if(persistiblePropertyValue!=thisPropertyValue) return false;
-		    }else{
-			return false;
-		    }
-		} 
-	    }
-	    return true;
-	}catch(Exception ex){
-	    //log.debug("::isClone(persistible) - Exception: "+ex);
-	    throw new White_FinancesException("Impossible to complete the operation due to an unknown internal error.", ex);
-	}
+	    //TODO OV: Implement operations of the method
+	    this.month=month;
+
+	    log.trace("::MontlyBudget() - Finish: ");
+	} catch (Exception e) {
+            throw new RuntimeException("Impossible to complete the operation due to an unknown internal error.", e);
+        }
     }
     
 }
