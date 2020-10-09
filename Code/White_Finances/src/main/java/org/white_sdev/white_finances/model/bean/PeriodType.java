@@ -154,7 +154,7 @@ public enum PeriodType {
 	add(new BiweeklyPeriod(Month.DECEMBER,true));
 	add(new BiweeklyPeriod(Month.DECEMBER,false));
 	}}),
-    WEEKLY(true);
+    WEEKLY();
     
     public Collection<Period> periods;
     
@@ -162,7 +162,7 @@ public enum PeriodType {
 	this.periods=periods;
     }
     
-    PeriodType(Boolean weeklyPeriod){
+    PeriodType(){
 	periods=new ArrayList<>();
 	for(int i=1; i<=53;++i){
 	     periods.add(new WeeklyPeriod(i));

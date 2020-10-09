@@ -107,8 +107,11 @@ import lombok.extern.slf4j.Slf4j;
  * @since Sep 24, 2020
  */
 @Slf4j
-public class Fund {
+public class Fund implements Persistable {
     
+    Account account;
+    String name;
+    String description;
     
     /**
      * Class Constructor. {Requirement_Reference}

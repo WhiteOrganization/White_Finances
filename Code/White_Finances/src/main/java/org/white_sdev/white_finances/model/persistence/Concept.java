@@ -111,13 +111,14 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.white_sdev.white_finances.exception.White_FinancesException;
+import org.white_sdev.white_finances.model.persistence.security.Family;
+import static org.white_sdev.white_validations.parameters.ParameterValidator.notNullValidation;
 
 /**
  * This is one on the main {@link Entity entities} of the Application Representing one of the most basic elements of it.
@@ -152,6 +153,15 @@ public class Concept implements Persistable {
     @GeneratedValue
     private Long id;
 
+    /**
+     * The {@link Family} to whom <code>this</code> {@link Concept} belongs to.
+     * There should not be a @{link Concept} without a {@link family} except for those controlled by the application.
+     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+     * @since 2020-10-08
+     */
+    @ManyToOne(fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private Family family;
+    
     /**
      * The name of the Concept. This is the most representative field of the {@link Concept} object; ought to be unique and there shouldn't be another {@link Entity} with the same
      * name and different {@link Id}.
@@ -211,20 +221,22 @@ public class Concept implements Persistable {
     protected Concept() { }
     
     /**
-     * Default Constructor of the class providing solely the name of the Concept. Initial setup; The name of the concept being the most representative attribute of the
-     * {@link Entity}, This method receives the name of the concept, then initializes it and ignores the rest of the attributes of the entity.
+     * Default Constructor of the class providing solely the {@link String name} and {@link Family} of the Concept.Initial setup; The name of the concept being the most 
+     * representative attribute of the {@link Entity}, This method receives the name of the concept, then initializes it and ignores the rest of the attributes of the entity.
      *
      * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+     * @param family The {@link Family} to whom <code>this</code> {@link Concept} belongs to
      * @since 2020-05-21
      * @param name String to perform the operation with.
      * @throws IllegalArgumentException - if the argument provided is null.
      */
-    public Concept(String name) {
+    public Concept(String name, Family family) {
 	log.trace("::Concept(name) - Start: Constructor");
-	if (name == null) throw new IllegalArgumentException("The name of the Concept can't be null.");
+	notNullValidation(new Object[]{name,family},"The name and familly of the Concept must be provided to create an instance.");
 	try {
 
 	    this.name = name;
+	    this.family=family;
 
 	    log.trace("::Concept(name) - Finish: Constructor");
 	} catch (Exception e) {

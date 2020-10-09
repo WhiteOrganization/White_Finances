@@ -1,6 +1,6 @@
 /*
- *  Filename:  FinanceRecord.java
- *  Creation Date:  Sep 27, 2020
+ *  Filename:  Account.java
+ *  Creation Date:  Oct 7, 2020
  *  Purpose:   
  *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * 
@@ -98,24 +98,39 @@
  */
 package org.white_sdev.white_finances.model.persistence;
 
-import javax.persistence.MappedSuperclass;
 import lombok.extern.slf4j.Slf4j;
+import org.white_sdev.white_finances.model.persistence.security.Family;
 //import static org.white_sdev.white_validations.parameters.ParameterValidator.notNullValidation;
 
 /**
  * 
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
- * @since Sep 27, 2020
+ * @since Oct 7, 2020
  */
 @Slf4j
-@MappedSuperclass
-public abstract class FinanceRecord implements Persistable{
+public class Account implements Persistable {
     
-    Budget budget;
-    Fund source;
-    Concept concept;
-    Double ammount;
-    Fund target;
-    String comments;
+    Family familly;
+    
+    /**
+     * Class Constructor. {Requirement_Reference}
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since Oct 7, 2020
+     * @param parameter The {@linkn Object} parameter to create <code>this</code> instance.
+     * @throws IllegalArgumentException - if the argument provided is null.
+     */
+    public Account(Object parameter) {
+	log.trace("::Account() - Start: ");
+	//notNullValidation(parameter,"Impossible to create the object. The parameter can't be null.");
+	try{
+	    
+	    //TODO OV: Implement operations of the method
+	    
+
+	    log.trace("::Account() - Finish: ");
+	} catch (Exception e) {
+            throw new RuntimeException("Impossible to complete the operation due to an unknown internal error.", e);
+        }
+    }
     
 }

@@ -98,8 +98,9 @@
  */
 package org.white_sdev.white_finances.model.persistence;
 
+import org.white_sdev.white_finances.model.persistence.security.User;
 import org.white_sdev.white_finances.model.bean.PeriodType;
-import java.util.ArrayList;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -108,11 +109,11 @@ import lombok.extern.slf4j.Slf4j;
  * @since Sep 23, 2020
  */
 @Slf4j
-public class Budget {
+public class Budget implements Persistable {
     
-    ArrayList<User> user;
+    Set<User> user;
     PeriodType periodType;
-    ArrayList<PeriodBudget> periodBudgets;
+    Set<PeriodBudget> periodBudgets;
     
     /**
      * Class Constructor. {Requirement_Reference}

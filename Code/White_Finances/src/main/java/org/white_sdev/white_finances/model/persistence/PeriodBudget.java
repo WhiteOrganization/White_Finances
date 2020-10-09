@@ -98,10 +98,8 @@
  */
 package org.white_sdev.white_finances.model.persistence;
 
-import java.util.ArrayList;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
-import org.white_sdev.white_finances.model.persistence.Budget;
-import org.white_sdev.white_finances.model.persistence.BudgetRecord;
 import org.white_sdev.white_finances.model.bean.Period;
 
 /**
@@ -110,13 +108,13 @@ import org.white_sdev.white_finances.model.bean.Period;
  * @since Sep 23, 2020
  */
 @Slf4j
-public class PeriodBudget {
+public class PeriodBudget implements Persistable {
     
     Budget budget;
     Integer year;
     Period period;
     
-    ArrayList<BudgetRecord> periodBudgetRecords;
+    Set<BudgetRecord> periodBudgetRecords;
     
     /**
      * Class Constructor. {Requirement_Reference}

@@ -1,5 +1,5 @@
 /*
- *  Filename:  User.java
+ *  Filename:  Family.java
  *  Creation Date:  Sep 23, 2020
  *  Purpose:   
  *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
@@ -96,38 +96,67 @@
  * 
  * Creative Commons may be contacted at creativecommons.org.
  */
-package org.white_sdev.white_finances.model.persistence;
+package org.white_sdev.white_finances.model.persistence.security;
 
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.white_sdev.white_finances.model.persistence.Account;
+import org.white_sdev.white_finances.model.persistence.Budget;
+import org.white_sdev.white_finances.model.persistence.Concept;
 
 /**
- * 
+ * A Group of users that will share the same budget will be called Family.
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * @since Sep 23, 2020
  */
+@Entity
+@Data //Getters&Setters for all attributes
 @Slf4j
-public class User {
+public class Family implements Serializable {
     
-    ArrayList<Family> families;
-    ArrayList<Budget> budgets;
+    
+    /**
+     * {@link Id} of the {@link Family} {@Entity}. Controlled by the framework and generated automatically, all id(s) are configured this way unless a field that will never change
+     * is clearly found in the {@link Entity} structure.
+     *
+     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+     * @since 2020-10-08
+     */
+    @Id
+    @GeneratedValue
+    private Long id;
+    @Transient
+    Set<User> users;
+    @Transient
+    Set<Budget> budgets;
+    @Transient
+    Set<Account> accounts;
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private Set<Concept> concepts;
     
     /**
      * Class Constructor. {Requirement_Reference}
      * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
      * @since Sep 23, 2020
-     * @param parameter The parameter to create the object.
-     * @throws IllegalArgumentException - if the argument provided is null.
      */
-    public User(Object parameter) {
-	log.trace("::User() - Start: ");
-	if (parameter==null) throw new IllegalArgumentException("Impossible to create the object. The parameter can't be null.");
+    public Family() {
+	log.trace("::Family() - Start: ");
+	//notNullValidation(parameter,"Impossible to create the object. The parameter can't be null.");
 	try{
 	    
 	    //TODO OV: Implement operations of the method
 	    
 
-	    log.trace("::User() - Finish: ");
+	    log.trace("::Family() - Finish: ");
 	} catch (Exception e) {
             throw new RuntimeException("Impossible to complete the operation due to an unknown internal error.", e);
         }

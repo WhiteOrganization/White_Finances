@@ -1,5 +1,5 @@
 /*
- *  Filename:  Family.java
+ *  Filename:  User.java
  *  Creation Date:  Sep 23, 2020
  *  Purpose:   
  *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
@@ -96,21 +96,23 @@
  * 
  * Creative Commons may be contacted at creativecommons.org.
  */
-package org.white_sdev.white_finances.model.persistence;
+package org.white_sdev.white_finances.model.persistence.security;
 
-import java.util.ArrayList;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.white_sdev.white_finances.model.persistence.PeriodBudget;
+import org.white_sdev.white_finances.model.persistence.Persistable;
 
 /**
- * A Group of users that will share the same budget will be called Family.
+ * 
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * @since Sep 23, 2020
  */
 @Slf4j
-public class Family {
+public class User implements Persistable {
     
-    ArrayList<User> users;
-    ArrayList<Budget> budgets;
+    Set<Family> families;
+    Set<PeriodBudget> periodBudgets;
     
     /**
      * Class Constructor. {Requirement_Reference}
@@ -119,15 +121,15 @@ public class Family {
      * @param parameter The parameter to create the object.
      * @throws IllegalArgumentException - if the argument provided is null.
      */
-    public Family(Object parameter) {
-	log.trace("::Family() - Start: ");
+    public User(Object parameter) {
+	log.trace("::User() - Start: ");
 	if (parameter==null) throw new IllegalArgumentException("Impossible to create the object. The parameter can't be null.");
 	try{
 	    
 	    //TODO OV: Implement operations of the method
 	    
 
-	    log.trace("::Family() - Finish: ");
+	    log.trace("::User() - Finish: ");
 	} catch (Exception e) {
             throw new RuntimeException("Impossible to complete the operation due to an unknown internal error.", e);
         }

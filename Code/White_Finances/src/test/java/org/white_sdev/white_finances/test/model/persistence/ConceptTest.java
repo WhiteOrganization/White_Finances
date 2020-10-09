@@ -112,6 +112,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.white_sdev.white_finances.model.persistence.Concept;
+import org.white_sdev.white_finances.model.persistence.security.Family;
 import org.white_sdev.white_finances.repo.ConceptRepository;
 import org.white_sdev.white_finances.test.mocks.LoggerTracker;
 
@@ -165,7 +166,7 @@ public class ConceptTest {
 	log.trace("::testSimpleConceptSave() - Start: ");
 	try {
 
-	    Concept a = new Concept("TestConcept");
+	    Concept a = new Concept("TestConcept",new Family());
 	    assertEquals(0, repo.count());
 	    Concept save = repo.save(a);
 	    assertEquals(1, repo.count());
@@ -189,10 +190,11 @@ public class ConceptTest {
 	log.trace("::testLombokEquals() - Start: ");
 	try {
 
-	    Concept a = new Concept("TestConcept");
+	    Family myFam=new Family();
+	    Concept a = new Concept("TestConcept",myFam);
 	    a.setId(1L);
 
-	    Concept b = new Concept("TestConcept");
+	    Concept b = new Concept("TestConcept",myFam);
 	    b.setId(1L);
 
 	    assert (a.isClone(b));
@@ -203,7 +205,7 @@ public class ConceptTest {
 
 	    assertNotNull(repo);
 
-	    Concept a1 = new Concept("TestConcept");
+	    Concept a1 = new Concept("TestConcept",myFam);
 
 	    b.setId(a1.getId());
 	    assertNotEquals(a1, b);
@@ -234,9 +236,10 @@ public class ConceptTest {
 	log.trace("::testCascade() - Start: ");
 	try {
 	    
-	    Concept gas = new Concept("Car Gasoline");
-	    Concept mtto = new Concept("Car Maintenance");
-	    Concept transport = new Concept("Transportation");
+	    Family myFam=new Family();
+	    Concept gas = new Concept("Car Gasoline", myFam);
+	    Concept mtto = new Concept("Car Maintenance", myFam);
+	    Concept transport = new Concept("Transportation", myFam);
 
 	    
 	    Set<Concept> subConcepts = new HashSet<>();
