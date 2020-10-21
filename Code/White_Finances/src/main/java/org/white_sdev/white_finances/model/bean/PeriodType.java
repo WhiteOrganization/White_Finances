@@ -1,6 +1,6 @@
 /*
- *  Filename:  Persistable.java
- *  Creation Date:  Jun 12, 2020
+ *  Filename:  PeriodType.java
+ *  Creation Date:  Sep 27, 2020
  *  Purpose:   
  *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * 
@@ -96,53 +96,76 @@
  * 
  * Creative Commons may be contacted at creativecommons.org.
  */
-package org.white_sdev.white_finances.model.persistence;
+package org.white_sdev.white_finances.model.bean;
 
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.io.Serializable;
-import javax.persistence.Entity;
-import org.white_sdev.white_finances.exception.White_FinancesException;
+//import lombok.extern.slf4j.Slf4j;
+
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.Collection;
+
+//import static org.white_sdev.white_validations.parameters.ParameterValidator.notNullValidation;
 
 /**
- * Interface that represents all the persistable instances in the app and standardizes some common methods they have.
+ * 
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
- * @since Jun 12, 2020
+ * @since Sep 27, 2020
  */
-public interface Persistable extends Serializable{
+//@Slf4j
+public enum PeriodType {
     
-    /**
-     * Compares both {@link Persistable Persistables} {@link Entity Entities} properties and returns weather they have the exact same elements or not.
-     * Compares the actual object [<code>this</code>] with the one provided.
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>	    
-     * @since 2020-06-12
-     * @param persistible The second {@link Persisitible} {@linnk Object} to compare with <code>this</code>.
-     * @return <code>true</code> in case both objects are clones, <code>false</code> in case the provided parameter is null.
-     */
-    public default boolean isClone(Persistable persistible){
-	
-	try {
-	    if(this.getClass()!=persistible.getClass()) return false;
-	    
-	    BeanInfo entityInfo = Introspector.getBeanInfo(persistible.getClass());
-	    PropertyDescriptor[] propertyDescriptors=entityInfo.getPropertyDescriptors();
-	    for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-		Object persistiblePropertyValue = propertyDescriptor.getReadMethod().invoke(persistible);
-		Object thisPropertyValue = propertyDescriptor.getReadMethod().invoke(this);
-		if(persistiblePropertyValue != null){
-		    if(thisPropertyValue != null){
-			if(persistiblePropertyValue!=thisPropertyValue) return false;
-		    }else{
-			return false;
-		    }
-		} 
-	    }
-	    return true;
-	}catch(Exception ex){
-	    //log.debug("::isClone(persistible) - Exception: "+ex);
-	    throw new White_FinancesException("Impossible to complete the operation due to an unknown internal error.", ex);
-	}
+    MONTHLY(new ArrayList<Period>(){{
+	add(new MontlyPeriod(Month.JANUARY));
+	add(new MontlyPeriod(Month.FEBRUARY));
+	add(new MontlyPeriod(Month.MARCH));
+	add(new MontlyPeriod(Month.APRIL));
+	add(new MontlyPeriod(Month.MAY));
+	add(new MontlyPeriod(Month.JUNE));
+	add(new MontlyPeriod(Month.JULY));
+	add(new MontlyPeriod(Month.AUGUST));
+	add(new MontlyPeriod(Month.SEPTEMBER));
+	add(new MontlyPeriod(Month.OCTOBER));
+	add(new MontlyPeriod(Month.NOVEMBER));
+	add(new MontlyPeriod(Month.DECEMBER));
+	}}),
+    BIWEEKLY(new ArrayList<Period>(){{
+	add(new BiweeklyPeriod(Month.JANUARY,true));
+	add(new BiweeklyPeriod(Month.JANUARY,false));
+	add(new BiweeklyPeriod(Month.FEBRUARY,true));
+	add(new BiweeklyPeriod(Month.FEBRUARY,false));
+	add(new BiweeklyPeriod(Month.MARCH,true));
+	add(new BiweeklyPeriod(Month.MARCH,false));
+	add(new BiweeklyPeriod(Month.APRIL,true));
+	add(new BiweeklyPeriod(Month.APRIL,false));
+	add(new BiweeklyPeriod(Month.MAY,true));
+	add(new BiweeklyPeriod(Month.MAY,false));
+	add(new BiweeklyPeriod(Month.JUNE,true));
+	add(new BiweeklyPeriod(Month.JUNE,false));
+	add(new BiweeklyPeriod(Month.JULY,true));
+	add(new BiweeklyPeriod(Month.JULY,false));
+	add(new BiweeklyPeriod(Month.AUGUST,true));
+	add(new BiweeklyPeriod(Month.AUGUST,false));
+	add(new BiweeklyPeriod(Month.SEPTEMBER,true));
+	add(new BiweeklyPeriod(Month.SEPTEMBER,false));
+	add(new BiweeklyPeriod(Month.OCTOBER,true));
+	add(new BiweeklyPeriod(Month.OCTOBER,false));
+	add(new BiweeklyPeriod(Month.NOVEMBER,true));
+	add(new BiweeklyPeriod(Month.NOVEMBER,false));
+	add(new BiweeklyPeriod(Month.DECEMBER,true));
+	add(new BiweeklyPeriod(Month.DECEMBER,false));
+	}}),
+    WEEKLY();
+    
+    public Collection<Period> periods;
+    
+    PeriodType(Collection<Period> periods){
+	this.periods=periods;
     }
     
+    PeriodType(){
+	periods=new ArrayList<>();
+	for(int i=1; i<=53;++i){
+	     periods.add(new WeeklyPeriod(i));
+	}
+    }
 }
