@@ -2,7 +2,8 @@
  *  Filename:  Transaction.java
  *  Creation Date:  Sep 23, 2020
  *  Purpose:   
- *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+ *  Author:    Obed Vazquez
+ *  E-mail:    obed.vazquez@gmail.com
  * 
  *  *** Creative Commons Attribution 4.0 International Public License ***
  *  Web Version: https://creativecommons.org/licenses/by/4.0/legalcode
@@ -115,7 +116,15 @@ public class Transaction extends FinanceRecord{
     
     Timestamp transactionTimestamp;
     Timestamp validForTimestamp;
-    
     String details;
+    
+    Transaction subTransaction;
+    Transaction superTransaction;
+    /**
+     * Indicates if {@code this} will show up in a Bank account balance.
+     * If this flag is true {@code this} {@link Transaction spent} should show up in a normal transaction balance. 
+     * And a false value will indicate that the {@link Transaction} is logic and will help to organize transaction for the {@link Family}.
+     */
+    Boolean bankTransaction=true;
     
 }

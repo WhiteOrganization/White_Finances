@@ -112,6 +112,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.white_sdev.white_finances.model.persistence.Concept;
+import org.white_sdev.white_finances.model.persistence.Persistable;
 import org.white_sdev.white_finances.model.persistence.security.Family;
 import org.white_sdev.white_finances.repo.ConceptRepository;
 import org.white_sdev.white_finances.test.mocks.LoggerTracker;
@@ -270,6 +271,13 @@ public class ConceptTest {
 	    log.error("::testCascade() - Exception: ", ex);
 	    throw new RuntimeException(ex);
 	}
+    }
+    
+    @Test
+    public void testGetSerialVersionUID(){
+	Concept gas = new Concept("Car Gasoline", new Family());
+	Long uid=gas.serialVersionUID;
+	assertNotNull(uid);
     }
 
 }

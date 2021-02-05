@@ -2,7 +2,8 @@
  *  Filename:  BudgetRecord.java
  *  Creation Date:  Sep 23, 2020
  *  Purpose:   
- *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+ *  Author:    Obed Vazquez
+ *  E-mail:    obed.vazquez@gmail.com
  * 
  *  *** Creative Commons Attribution 4.0 International Public License ***
  *  Web Version: https://creativecommons.org/licenses/by/4.0/legalcode
@@ -98,8 +99,8 @@
  */
 package org.white_sdev.white_finances.model.persistence;
 
-import org.white_sdev.white_finances.model.bean.Period;
 import lombok.extern.slf4j.Slf4j;
+import org.white_sdev.white_finances.exception.White_FinancesException;
 import static org.white_sdev.white_validations.parameters.ParameterValidator.notNullValidation;
 
 /**
@@ -110,7 +111,12 @@ import static org.white_sdev.white_validations.parameters.ParameterValidator.not
 @Slf4j
 public class BudgetRecord extends FinanceRecord{
     
-    Period period;
+    /**
+     * The {@link Entity} that will work as a unifier to compile all of the brother {@link BudgetRecords records} of {@code this}.
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2020-11-27
+     */
+    PeriodBudget periodBudget;
     
     
     
@@ -131,7 +137,7 @@ public class BudgetRecord extends FinanceRecord{
 
 	    log.trace("::BudgetRecord() - Finish: ");
 	} catch (Exception e) {
-            throw new RuntimeException("Impossible to complete the operation due to an unknown internal error.", e);
+            throw new White_FinancesException("Impossible to complete the operation due to an unknown internal error.", e);
         }
     }
     

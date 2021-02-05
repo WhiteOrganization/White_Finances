@@ -38,6 +38,12 @@
 	</dependency>
 	
 	<dependency>
+	    <groupId>org.hibernate</groupId>
+	    <artifactId>hibernate-core</artifactId>
+	    <type>jar</type>
+	</dependency>
+	
+	<dependency>
 	    <groupId>org.springframework.boot</groupId>
 	    <artifactId>spring-boot-starter-test</artifactId>
 	    <scope>test</scope>
@@ -55,6 +61,7 @@
 	    <version>2.1.0</version>
 	</dependency>-->
 	 
+	 <!-- DELETE ME Duplicated -->
 	<dependency>
 	    <groupId>org.hibernate</groupId>
 	    <artifactId>hibernate-core</artifactId>
@@ -74,7 +81,7 @@
 	    <type>jar</type>
 	</dependency>
 	
-	<!-- manually added (Should delete?)-->
+	<!-- Hibernate Entities Validations @NotBlank (manually added )-->
 	<dependency>
 	    <groupId>javax.validation</groupId>
 	    <artifactId>validation-api</artifactId>
@@ -96,7 +103,7 @@
 	<dependency>
 	    <groupId>com.github.white-sdev</groupId>
 	    <artifactId>White_Validations</artifactId>
-	    <version>1.0.1</version>
+	    <version>3.0.0</version> <!--recently changed without testing -->
 	    <exclusions>
 	     <exclusion>
 	      <groupId>org.slf4j</groupId>
@@ -104,6 +111,12 @@
 	     </exclusion>
 	    </exclusions>
 	</dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.3.9</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>

@@ -2,7 +2,8 @@
  *  Filename:  Persistable.java
  *  Creation Date:  Jun 12, 2020
  *  Purpose:   
- *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+ *  Author:    Obed Vazquez
+ *  E-mail:    obed.vazquez@gmail.com
  * 
  *  *** Creative Commons Attribution 4.0 International Public License ***
  *  Web Version: https://creativecommons.org/licenses/by/4.0/legalcode
@@ -113,15 +114,23 @@ import org.white_sdev.white_finances.exception.White_FinancesException;
 public interface Persistable extends Serializable{
     
     /**
+     * The <a href="https://docs.oracle.com/cd/E19798-01/821-1841/6nmq2cpak/index.html#:~:text=If%20an%20entity%20instance%20is,classes%20may%20extend%20entity%20classes">standard</a> 
+     * recommends this in case the {@link Serializable} object could be de-serialized. 
+     * 
+     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
+     * @since 2020-06-19
+     */
+    static final long serialVersionUID = 1L;
+    
+    /**
      * Compares both {@link Persistable Persistables} {@link Entity Entities} properties and returns weather they have the exact same elements or not.
      * Compares the actual object [<code>this</code>] with the one provided.
      * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>	    
      * @since 2020-06-12
      * @param persistible The second {@link Persisitible} {@linnk Object} to compare with <code>this</code>.
-     * @return <code>true</code> in case both objects are clones, <code>false</code> in case the provided parameter is null.
+     * @return <code>true</code> in case both objects are clones, <code>false</code> in case the provided parameter is <code>null</code> or is not a clone of <code>this</code>.
      */
     public default boolean isClone(Persistable persistible){
-	
 	try {
 	    if(this.getClass()!=persistible.getClass()) return false;
 	    
@@ -144,5 +153,40 @@ public interface Persistable extends Serializable{
 	    throw new White_FinancesException("Impossible to complete the operation due to an unknown internal error.", ex);
 	}
     }
+    
+    /**
+     * Compares both {@link Persistable Persistables} {@link Entity Entities} properties and returns weather 
+     * they have the exact same elements or not.Compares the actual object [<code>this</code>] with the one provided.
+     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a> 
+     * @since 2020-11-24
+     * @param original	The first {@link Persistible} {@link Entity} to compare whether is clone of {@code candidate} or not.
+     * @param candidate The second {@link Persisitible} {@linnk Object} to compare with {@code original}.
+     * @return <code>true</code> in case both objects are clones, <code>false</code> in case any of the parameters are <code>null</code> or not clones.
+     */
+    public default boolean areClones(Persistable original,Persistable candidate){
+	try {
+	    if(original.getClass()!=candidate.getClass()) return false;
+	    
+	    BeanInfo entityInfo = Introspector.getBeanInfo(candidate.getClass());
+	    PropertyDescriptor[] propertyDescriptors=entityInfo.getPropertyDescriptors();
+	    for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+		Object persistiblePropertyValue = propertyDescriptor.getReadMethod().invoke(candidate);
+		Object thisPropertyValue = propertyDescriptor.getReadMethod().invoke(original);
+		if(persistiblePropertyValue != null){
+		    if(thisPropertyValue != null){
+			if(persistiblePropertyValue!=thisPropertyValue) return false;
+		    }else{
+			return false;
+		    }
+		} 
+	    }
+	    return true;
+	}catch(Exception ex){
+	    //log.debug("::isClone(persistible) - Exception: "+ex);
+	    throw new White_FinancesException("Impossible to complete the operation due to an unknown internal error.", ex);
+	}
+    }
+    
+    
     
 }

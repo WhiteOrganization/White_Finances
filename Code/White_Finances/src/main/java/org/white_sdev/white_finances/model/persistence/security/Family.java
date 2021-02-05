@@ -2,7 +2,8 @@
  *  Filename:  Family.java
  *  Creation Date:  Sep 23, 2020
  *  Purpose:   
- *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+ *  Author:    Obed Vazquez
+ *  E-mail:    obed.vazquez@gmail.com
  * 
  *  *** Creative Commons Attribution 4.0 International Public License ***
  *  Web Version: https://creativecommons.org/licenses/by/4.0/legalcode
@@ -98,7 +99,6 @@
  */
 package org.white_sdev.white_finances.model.persistence.security;
 
-import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -112,6 +112,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.white_sdev.white_finances.model.persistence.Account;
 import org.white_sdev.white_finances.model.persistence.Budget;
 import org.white_sdev.white_finances.model.persistence.Concept;
+import org.white_sdev.white_finances.model.persistence.Persistable;
 
 /**
  * A Group of users that will share the same budget will be called Family.
@@ -121,7 +122,8 @@ import org.white_sdev.white_finances.model.persistence.Concept;
 @Entity
 @Data //Getters&Setters for all attributes
 @Slf4j
-public class Family implements Serializable {
+public class Family implements Persistable {
+    
     
     
     /**

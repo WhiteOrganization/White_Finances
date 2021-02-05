@@ -1,8 +1,9 @@
 /*
- *  Filename:  Prueba.java
+ *  Filename:  Concept.java
  *  Creation Date:  May 19, 2020
  *  Purpose:   
- *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+ *  Author:    Obed Vazquez
+ *  E-mail:    obed.vazquez@gmail.com
  * 
  *  *** Creative Commons Attribution 4.0 International Public License ***
  *  Web Version: https://creativecommons.org/licenses/by/4.0/legalcode
@@ -98,7 +99,6 @@
  */
 package org.white_sdev.white_finances.model.persistence;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -121,8 +121,9 @@ import org.white_sdev.white_finances.model.persistence.security.Family;
 import static org.white_sdev.white_validations.parameters.ParameterValidator.notNullValidation;
 
 /**
- * This is one on the main {@link Entity entities} of the Application Representing one of the most basic elements of it.
+ * One of the main {@link Entity entities} of the Application Representing one of the most basic elements of it.
  * A concept is the element onto which the user can logically organize its spending or income and categorize it.
+ * It is used in both {@link FinanceRecord} while budgeting in {@link BudgetRecord} or in {@link Transaction}s.
  *
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * @since May 13, 2020
@@ -133,14 +134,6 @@ import static org.white_sdev.white_validations.parameters.ParameterValidator.not
 public class Concept implements Persistable {
 
     //<editor-fold defaultstate="collapsed" desc="Attributes">
-    /**
-     * The <a href="https://docs.oracle.com/cd/E19798-01/821-1841/6nmq2cpak/index.html#:~:text=If%20an%20entity%20instance%20is,classes%20may%20extend%20entity%20classes">standard</a> 
-     * recommends this in case the {@link Serializable} object could be de-serialized. 
-     * 
-     * @author <a href='mailto:obed.vazquez@gmail.com'>Obed Vazquez</a>
-     * @since 2020-06-19
-     */
-    static final long serialVersionUID = 1L;
 
     /**
      * {@link Id} of the {@link Concept} {@Entity}. Controlled by the framework and generated automatically, all id(s) are configured this way unless a field that will never change

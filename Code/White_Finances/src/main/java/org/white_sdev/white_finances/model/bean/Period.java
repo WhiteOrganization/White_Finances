@@ -2,7 +2,8 @@
  *  Filename:  Period.java
  *  Creation Date:  Sep 23, 2020
  *  Purpose:   
- *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+ *  Author:    Obed Vazquez
+ *  E-mail:    obed.vazquez@gmail.com
  * 
  *  *** Creative Commons Attribution 4.0 International Public License ***
  *  Web Version: https://creativecommons.org/licenses/by/4.0/legalcode
@@ -103,12 +104,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.white_sdev.white_finances.model.persistence.Budget;
 
 /**
- * 
+ * Defines the time limits that a Period will have in the Budget of the user. Usually this limits will define the time on what the final user will plan to spend all of the 
+ * income they have.
+ * Periods depend entirely on the {@link PeriodType period type} they are, the class {@link PeriodType} will contain a {@link Set} of {@link Period periods} 
+ * with the representations of each one of the currently supported {@link Period periods}.
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * @since Sep 23, 2020
  */
-@Slf4j
-public abstract class Period {
+ public abstract class Period {
     
     private Budget budget; //PeriodType in here
     Period previousPeriod;

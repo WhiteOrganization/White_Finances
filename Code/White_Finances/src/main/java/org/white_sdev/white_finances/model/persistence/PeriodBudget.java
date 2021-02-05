@@ -2,7 +2,8 @@
  *  Filename:  PeriodBudget.java
  *  Creation Date:  Sep 23, 2020
  *  Purpose:   
- *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+ *  Author:    Obed Vazquez
+ *  E-mail:    obed.vazquez@gmail.com
  * 
  *  *** Creative Commons Attribution 4.0 International Public License ***
  *  Web Version: https://creativecommons.org/licenses/by/4.0/legalcode
@@ -99,21 +100,46 @@
 package org.white_sdev.white_finances.model.persistence;
 
 import java.util.Set;
+import javax.persistence.Entity;
 import lombok.extern.slf4j.Slf4j;
+import org.white_sdev.white_finances.exception.White_FinancesException;
 import org.white_sdev.white_finances.model.bean.Period;
+import org.white_sdev.white_finances.model.bean.PeriodType;
 
 /**
- * 
+ * One of the main classes of the Budgeting compendium, will store all of the {@link #periodBudgetRecords} that will define a single budgeting period for the {@link Budget#family}.
+ * Is important to remember that the actual{@link PeriodType} of {@code this} will be defined by the {@link Budget} instance on {@link Budget#periodType}
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * @since Sep 23, 2020
  */
 @Slf4j
 public class PeriodBudget implements Persistable {
     
+    /**
+     * Budget abstraction instance to which this {@link Entity} belongs to.
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2020-11-24
+     */
     Budget budget;
+    /**
+     * Year of {@code this} Period.
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2020-11-24
+     */
     Integer year;
+    
+    /**
+     * The {@link Period} to which {@code this} {@link PeriodBudget} belongs.
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2020-11-27
+     */
     Period period;
     
+    /**
+     * The {@link Set} of {@link BudgetRecord records} that will constitute the {@link PeriodBudget} for this {@link Period}.
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2020-11-27
+     */
     Set<BudgetRecord> periodBudgetRecords;
     
     /**
@@ -133,7 +159,7 @@ public class PeriodBudget implements Persistable {
 
 	    log.trace("::PeriodBudget() - Finish: ");
 	} catch (Exception e) {
-            throw new RuntimeException("Impossible to complete the operation due to an unknown internal error.", e);
+            throw new White_FinancesException("Impossible to complete the operation due to an unknown internal error.", e);
         }
     }
     

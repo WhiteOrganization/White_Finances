@@ -2,7 +2,8 @@
  *  Filename:  Budget.java
  *  Creation Date:  Sep 23, 2020
  *  Purpose:   
- *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+ *  Author:    Obed Vazquez
+ *  E-mail:    obed.vazquez@gmail.com
  * 
  *  *** Creative Commons Attribution 4.0 International Public License ***
  *  Web Version: https://creativecommons.org/licenses/by/4.0/legalcode
@@ -98,21 +99,42 @@
  */
 package org.white_sdev.white_finances.model.persistence;
 
-import org.white_sdev.white_finances.model.persistence.security.User;
 import org.white_sdev.white_finances.model.bean.PeriodType;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.white_sdev.white_finances.exception.White_FinancesException;
+import org.white_sdev.white_finances.model.persistence.security.Family;
+import static org.white_sdev.white_validations.parameters.ParameterValidator.notNullValidation;
 
 /**
+ * This class represents the Budget as an abstract concept defined by a {@link Set} of {@link #periodBudgets} which should not be confused with it. 
+ * The actual information of each is stored in a {@link PeriodBudget} instance commonly called Budget but actually being the relation of the {@link Period} and each {@link BudgetRecord};
+ * for more information see {@link PeriodBudget} documentation.
  * 
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * @since Sep 23, 2020
+ * @see PeriodBudget
  */
 @Slf4j
 public class Budget implements Persistable {
     
-    Set<User> user;
+    /**
+     * The {@link Family} to whom this @{link Budget} belongs to.
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2020-11-23
+     */
+    Family family;
+    /**
+     * The {@link PeriodType} that all {@link #periodBudgets} ought to have
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2020-11-23
+     */
     PeriodType periodType;
+    /**
+     * Will store all of the, so called "Budget" data. 
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2020-11-23
+     */
     Set<PeriodBudget> periodBudgets;
     
     /**
@@ -124,7 +146,7 @@ public class Budget implements Persistable {
      */
     public Budget(Object parameter) {
 	log.trace("::Budget() - Start: ");
-	if (parameter==null) throw new IllegalArgumentException("Impossible to create the object. The parameter can't be null.");
+	notNullValidation(parameter);
 	try{
 	    
 	    //TODO OV: Implement operations of the method
@@ -132,7 +154,7 @@ public class Budget implements Persistable {
 
 	    log.trace("::Budget() - Finish: ");
 	} catch (Exception e) {
-            throw new RuntimeException("Impossible to complete the operation due to an unknown internal error.", e);
+            throw new White_FinancesException("Impossible to complete the operation due to an unknown internal error.", e);
         }
     }
     

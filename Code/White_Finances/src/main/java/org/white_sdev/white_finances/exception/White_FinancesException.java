@@ -2,7 +2,8 @@
  *  Filename:  White_FinancesException.java
  *  Creation Date:  May 22, 2020
  *  Purpose:   
- *  Author:    <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+ *  Author:    Obed Vazquez
+ *  E-mail:    obed.vazquez@gmail.com
  * 
  *  *** Creative Commons Attribution 4.0 International Public License ***
  *  Web Version: https://creativecommons.org/licenses/by/4.0/legalcode
@@ -98,15 +99,19 @@
  */
 package org.white_sdev.white_finances.exception;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Main Exception class of the App. Used mainly to encapsulate other {@link Exception Exceptions} and declare useful information on the errors found exclusively inside the library.
  *
  * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
  * @since May 22, 2020
  */
+@Slf4j
 public class White_FinancesException extends RuntimeException{
     
-    
+    //<editor-fold defaultstate="collapsed" desc="Methods">
+
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Default and only constructor used to encapsulate all the App Exceptions.
@@ -130,6 +135,45 @@ public class White_FinancesException extends RuntimeException{
     public White_FinancesException(String message) {
 	super(message);
     }
-//</editor-fold>
+    //</editor-fold>
+    
+    /**
+     * Obtain a {@link String} formatted with the list of {@link Exceptions} defined by {@code this}
+     * @author <a href="mailto:obed.vazquez@gmail.com">Obed Vazquez</a>
+     * @since 2020-11-24
+     * @return The {@link String} with the causes.
+     */
+    public String getCauses(){
+	try{
+	    log.trace("::getCauses() - Start");
+	    final String BREAKLINE="\n";
+	    final String BREAKLINE_REGEX="[[\\r\\n]\\r\\n]";
+
+	    String causes= "Cause: "+getMessage()+BREAKLINE;
+	    String causeMessage;
+	    String lastAt="";
+	    for(Throwable cause=this.getCause();cause!=null;cause=cause.getCause()){
+		causeMessage=cause.getMessage();
+		if(causeMessage!=null && !causeMessage.isBlank()){
+
+		    String[] causedBy=causeMessage.split(BREAKLINE_REGEX);
+
+		    causes+="Cause: "+causedBy[0]+BREAKLINE;
+		    //causes+="---"+cause.getLocalizedMessage();
+		    //lastAt=causedBy.length>1?causedBy[1]:"";
+
+		}
+	    }
+	    causes+=lastAt;
+	    
+	    log.trace("::getCauses() - Finish");
+	    return causes;
+	}catch(Exception ex){
+	    log.error("::getCauses() - Exception: There was an error when trying to obtain the cause trace of the exception:"+this);
+	    return "Unable to obtain cause";
+	}
+    }
+    
+    //</editor-fold>
     
 }
